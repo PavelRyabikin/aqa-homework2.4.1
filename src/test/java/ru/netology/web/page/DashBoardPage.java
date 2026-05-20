@@ -3,14 +3,13 @@ package ru.netology.web.page;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
-import ru.netology.web.data.DataHelper;
 
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
 
 public class DashBoardPage {
     private final SelenideElement header = $("[data-test-id='dashboard']");
-    private ElementsCollection cards = $$(".list__item div");
+    private final ElementsCollection cards = $$(".list__item");
     private final String balanceStart = "баланс: ";
     private final String balanceFinish = " р.";
 
@@ -18,17 +17,17 @@ public class DashBoardPage {
         header.should(Condition.visible).should(Condition.text("Личный кабинет"));
     }
 
-    private SelenideElement findCard(DataHelper.CardInfo cardInfo) {
-        return cards.find(Condition.attribute("data-test-id", cardInfo.getTestId()));
+    private SelenideElement getCardByIndex(int index) {
+        return cards.get(index - 1);
     }
 
-    public int getCardBalance(DataHelper.CardInfo cardInfo) {
-        String text = findCard(cardInfo).getText();
+    public int getCardBalance(int index) {
+        var text = getCardByIndex(index).getText();
         return extractBalance(text);
     }
 
-    public TransferPage selectCard(DataHelper.CardInfo cardInfo) {
-        findCard(cardInfo).$("button").click();
+    public TransferPage selectCard(int index) {
+        getCardByIndex(index).$("button").click();
         return new TransferPage();
     }
 
